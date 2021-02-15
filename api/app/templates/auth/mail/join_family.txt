@@ -1,0 +1,10 @@
+{{user.username}} wants you to join their family on HunnydDu!
+<br/>
+Please click the link below to join the family:
+<br/>
+{{url_for('auth.register_from_email',token=token, _external=True)}}
+<br/>
+Thank you,
+Admin
+<br/>
+Note: replies to this email address are not monitored.

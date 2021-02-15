@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+  hunnyDu - {{user.username}}
+{% endblock %}
+
+{% block page_content %}
+<div class="page-header">
+
+    <div class="profile-header">
+        <h1>{{user.username}}</h1>
+        {% if current_user.is_administrator() %}
+            <p><a href="mailto:{{ user.email }}">{{ user.email }}</a></p>
+        {% endif %}
+        <p>Family: {{user.family.family_name}}</p>
+        {% if current_user.is_administrator() %}
+              <a class='btn btn-danger'
+              href="{{url_for('main.edit_profile_admin',id=user.id)}}">
+              Edit Profile [Admin]
+              </a>
+          {% endif %}
+          {% if user == current_user %}
+              <a class='btn btn-default' href="{{url_for('main.edit_profile')}}">
+                Edit Profile
+              </a>
+          {% endif %}
+    </div>
+</div>
+<h3> Tasks </h3>
+<table>
+  <thead><tr><th>Task Name</th><th>Due</th></tr></thead>
+  {% for task in user.tasks %}
+    <tr>
+      <td>
+        <a href="{{url_for('main.task',id=task.id)}}">{{task.taskname}}</a>
+      </td>
+      <td>
+        {% if task.next_due.date() < today.date() %}
+          <div style="color:red;">{{task.next_due.strftime("%A, %b %d")}}</div>
+        {% else %}
+          {{task.next_due.strftime("%A, %b %d")}}
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

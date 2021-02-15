@@ -1,0 +1,3 @@
+<h2>{{user.username}} has completed {{task.taskname}}!</h2>
+
+<h3> Click <a href="{{url_for('main.profile',id=user.id)}}">here</a> to view {{user.username}}'s profile.</h3>

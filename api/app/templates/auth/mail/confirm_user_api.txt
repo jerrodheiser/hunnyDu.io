@@ -1,0 +1,10 @@
+{{user.username}},
+<br/>
+Please confirm your account by clicking the link below:
+<br/>
+http://localhost:3000/auth/confirmUser/{{token}}
+<br/>
+Thank you,
+Admin
+<br/>
+Note: replies to this email address are not monitored.

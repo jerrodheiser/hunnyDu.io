@@ -1,0 +1,10 @@
+{{user.username}}
+<br/>
+Please confirm your email bye clicking the link below:
+<br/>
+{{url_for('auth.confirm',token=token, _external=True)}}
+<br/>
+Thank you,
+Admin
+<br/>
+Note: replies to this email address are not monitored.

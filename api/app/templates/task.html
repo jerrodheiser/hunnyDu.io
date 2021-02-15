@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %} hunnyDu - Task{% endblock %}
+
+{% block page_content %}
+<h1>Take Name: {{task.taskname}}</h1>
+<h2>Next Due: {{task.next_due.strftime("%A, %b %d")}}</h2>
+{% if current_user.can(Permission.CREATE) %}
+<a href="{{url_for('main.delete_task',id=task.id)}}"" style="color:red;">Delete</a>
+{% endif %}
+<ul>
+  {% if task.subtasks.all() %}
+    {% for subtask in task.subtasks.order_by(Subtask.is_complete.asc()) %}
+      <li>{% if subtask.is_complete %}
+            <div style='color:#30c8ff;text-decoration: line-through;'>{{ subtask.subtask_name }}</div>
+          {% else %}
+          {{ subtask.subtask_name }} <a href="{{url_for('main.complete_subtask',id = subtask.id)}}">
+            Complete</a>
+          {% endif %}
+      </li>
+    {% endfor %}
+  {% else %}
+    <h2 style="color:#00de6b;"> Add some Subtasks!</h2>
+  {% endif %}
+</ul>
+</br>
+{% if current_user.can(Permission.CREATE) %}
+  <a href="{{url_for('main.new_subtask', id = task.id)}}">
+    <img src="{{ url_for('static', filename='plus_sign.jpg') }}" style="width:15%;">
+  </a>
+{% endif %}
+{% endblock %}

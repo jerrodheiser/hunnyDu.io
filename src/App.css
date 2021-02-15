@@ -1,0 +1,46 @@
+.pageTitle {
+  color: "5c5c5c";
+  margin-top: 1em;
+  margin-bottom: .5em;
+}
+
+.subtaskComplete {
+  text-decoration: line-through;
+}
+
+.subtaskForm {
+  padding-top: 25px;
+}
+
+.align-right {
+  right:0px;
+}
+
+.loginForm-container {
+  min-height: 75vh;
+  min-width:30vw;
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.loginform-card {
+  text-align: right;
+}
+
+.center-aligned {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+.loading-visual {
+  min-height: 75vh;
+  min-width:30vw;
+  align-items: center;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
