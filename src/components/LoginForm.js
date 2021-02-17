@@ -62,7 +62,7 @@ const LoginForm = (props) => {
       <Col lg>
         <Row className="justify-content-md-center">
           <Jumbotron>
-            <h1>Welcome to hunnydu!</h1>
+            <h1>Welcome to hunnyDu!</h1>
             <p>The best way to assign and track household chores!</p>
           </Jumbotron>
         </Row>

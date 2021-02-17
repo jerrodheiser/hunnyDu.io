@@ -70,7 +70,7 @@ const NewFamilyForm = (props) => {
         </Form.Group>
         <Row>
           <Button variant="success" size="md" type={"submit"}>
-            Start using HunnyDu!
+            Start using hunnyDu!
           </Button>
         </Row>
       </Form>

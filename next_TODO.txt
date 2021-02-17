@@ -26,18 +26,23 @@ Action Items:
       +Display page as if viewing others profiles
       +Edit buttons for your info (change email)
   -Rig for deployment:
+    -upgrade yarn
+      +Upgrade locally
+      +test locally by reenabling config variables
+      -push to git
+      -pull from git
     +Add resend confirmation email function
     -get an email address for hunnydu
     +Remove unnecessary comments and print statements.
-      -Found during code review:
-        -data/index.js - removed comments
-        -context/index.js - removed isLoading, familyId, unused functions,
+      +Found during code review:
+        +data/index.js - removed comments
+        +context/index.js - removed isLoading, familyId, unused functions,
           unused arguments in methods, unused returned responses,
-        -models.py - standardized returned responses
-          -errMessage, status_codes
-        -Components:
-          -Made better names for several functions (sendFamilyInvite vice join request)
-          -Made uniform consolidated comments throughout.
+        +models.py - standardized returned responses
+          +errMessage, status_codes
+        +Components:
+          +Made better names for several functions (sendFamilyInvite vice join request)
+          +Made uniform consolidated comments throughout.
     +Change erroneous 202 codes to 200 for success vice accepted and not acted on.
     -Configure authentication to use the header, not the body
     -Test data/index api.get method with headers attached
