@@ -11,7 +11,6 @@ const UnconfirmedAgain = () => {
   const {actions, id} = useContext(HunnyduContext);
 
   const handleClick = () => {
-    console.log(id);
     actions.resendConfirmationEmail(id);
     console.log('Resent confirmation email.');
   }

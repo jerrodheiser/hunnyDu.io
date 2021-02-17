@@ -75,7 +75,6 @@ const RegistrationForm = (props) => {
             }
             else if (res.status === 201) {
               // Returned response is code 201 for successful registration.
-              console.log(res);
               props.history.push('/unconfirmed');
             }
           })
