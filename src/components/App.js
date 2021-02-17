@@ -41,7 +41,7 @@ const App = () => {
         <Provider>
           <Header />
             <Switch>
-              <PrivateRoute exact path="/" render={()=>(<Redirect to="/dashboard" />)} />
+              <Route exact path="/" render={()=>(<Redirect to="/dashboard" />)} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
               <PrivateRoute path="/viewFamily" component={ViewFamily} />
               <LeaderRoute path="/manageFamily" component={ManageFamily} />

@@ -9,7 +9,7 @@ class Config:
 # Determine additional configuration variables, if required.
 # ADMIN EMAIL ADDRESS must be created, and this is the mail sender.
 ################################################################################
-    SECRET_KEY = os.environ.get("SECRET_KEY")
+    SECRET_KEY = os.environ.get("SECRET_KEY",'temporary')
     APP_ADMIN = os.environ.get("APP_ADMIN",'')
     MAIL_SERVER = os.environ.get("MAIL_SERVER", 'smtp.googlemail.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT','587'))
