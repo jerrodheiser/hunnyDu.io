@@ -29,8 +29,9 @@ Action Items:
     -upgrade yarn
       +Upgrade locally
       +test locally by reenabling config variables
-      -push to git
-      -pull from git
+      +push to git
+      +pull from git
+      -remake venv
     +Add resend confirmation email function
     -get an email address for hunnydu
     +Remove unnecessary comments and print statements.

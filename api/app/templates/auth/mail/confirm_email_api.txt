@@ -2,7 +2,7 @@
 <br/>
 Please confirm your updated email by clicking the link below:
 <br/>
-http://localhost:3000/auth/confirmEmailChange/{{token}}
+http://45.79.173.79:3000/auth/confirmEmailChange/{{token}}
 <br/>
 Thank you,
 <br/>
