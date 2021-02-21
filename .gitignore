@@ -17,7 +17,7 @@ data-dev.sqlite
 .flaskenv
 data-dev.sqlite
 venv
-api/test.txt
+api/text.txt
 test2.txt
 
 
