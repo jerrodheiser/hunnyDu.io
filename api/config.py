@@ -1,5 +1,9 @@
 import os
+import json
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+with open('/etc/config.json') as config_file:
+	config = json.load(config_file)
 
 
 # Creates the configuration class.
@@ -9,14 +13,14 @@ class Config:
 # Determine additional configuration variables, if required.
 # ADMIN EMAIL ADDRESS must be created, and this is the mail sender.
 ################################################################################
-    SECRET_KEY = os.environ.get("SECRET_KEY",'temporary')
+    SECRET_KEY = config.get("SECRET_KEY",'')
     APP_ADMIN = os.environ.get("APP_ADMIN",'')
     MAIL_SERVER = os.environ.get("MAIL_SERVER", 'smtp.googlemail.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT','587'))
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS','true').lower() in \
         ['true','on','1']
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+    MAIL_USERNAME = config.get('MAIL_USERNAME')
+    MAIL_PASSWORD = config.get('MAIL_PASSWORD')
     MAIL_PREFIX = os.environ.get('MAIL_PREFIX','hunnydu - ')
     MAIL_SENDER = 'hunnydu Admin <hunnydu.io>'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
