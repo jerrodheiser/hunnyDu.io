@@ -13,9 +13,12 @@
 
 # api
 __pycache__
-api/data-dev.sqlite
+data-dev.sqlite
 .flaskenv
+data-dev.sqlite
 venv
+test.txt
+
 
 # misc
 .DS_Store
