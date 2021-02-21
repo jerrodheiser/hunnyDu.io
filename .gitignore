@@ -12,13 +12,12 @@
 /build
 
 # api
-__pycache__
+*__pycache__
 data-dev.sqlite
 .flaskenv
-data-dev.sqlite
+api/data-dev.sqlite
 venv
 api/text.txt
-test2.txt
 
 
 # misc
