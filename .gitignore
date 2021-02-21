@@ -18,6 +18,8 @@ data-dev.sqlite
 api/data-dev.sqlite
 venv
 api/text.txt
+api/test-text.txt
+
 
 
 # misc
