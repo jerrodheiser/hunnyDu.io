@@ -15,7 +15,7 @@
 *__pycache__
 .flaskenv
 venv
-api/data-dev.sqlite
+*data-dev.sqlite
 
 
 # misc
