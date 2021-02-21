@@ -13,13 +13,8 @@
 
 # api
 *__pycache__
-data-dev.sqlite
 .flaskenv
-api/data-dev.sqlite
 venv
-api/text.txt
-api/test-text.txt
-
 
 
 # misc
