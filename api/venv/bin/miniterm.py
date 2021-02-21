@@ -1,4 +1,4 @@
-#!/mnt/c/Users/jheis/documents/flaskwebdevelopment/environments/venv/bin/python3
+#!/home/jheiser/hunnyDu.io/api/venv/bin/python3
 #
 # Very simple serial terminal
 #

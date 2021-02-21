@@ -1,4 +1,4 @@
-#!/mnt/c/Users/jheis/documents/flaskwebdevelopment/environments/venv/bin/python3
+#!/home/jheiser/hunnyDu.io/api/venv/bin/python3
 # EASY-INSTALL-ENTRY-SCRIPT: 'Twisted==17.9.0','console_scripts','trial'
 __requires__ = 'Twisted==17.9.0'
 import re
