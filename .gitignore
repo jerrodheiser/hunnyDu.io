@@ -12,10 +12,10 @@
 /build
 
 # api
-/api/__pycache__
-/api/data-dev.sqlite
-/api/.flaskenv
-/api/venv
+__pycache__
+data-dev.sqlite
+.flaskenv
+venv
 
 # misc
 .DS_Store
