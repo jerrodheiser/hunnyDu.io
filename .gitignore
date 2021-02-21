@@ -16,7 +16,7 @@
 .flaskenv
 venv
 api/test.txt
-api/data-dev
+api/data-dev.sqlite
 
 
 # misc
