@@ -24,7 +24,6 @@ venv
 .env.development.local
 .env.test.local
 .env.production.local
-next_TODO.txt
 
 
 npm-debug.log*
