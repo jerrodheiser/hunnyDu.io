@@ -243,4 +243,3 @@ class APITestCase(unittest.TestCase):
             )
         json_response = json.loads(response.get_data(as_text=True))
         self.assertEqual(json_response['posts'][0]['body'],'body of the blog post')
-"""
