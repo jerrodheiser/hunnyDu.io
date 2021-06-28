@@ -31,18 +31,18 @@ class APITestCase(unittest.TestCase):
         db.session.commit()
 
         # No username or password
-        response = self.client.post('/api/auth/login', data={
-            'auth':{"email_or_token":None, "password":None}})
+        response = self.client.post('/api/auth/login', data=json.dumps({
+            'auth':{"email_or_token":None, "password":None}}))
         self.assertEqual(response.status_code, 400)
 
         # Invalid username/password combo
-        response = self.client.post('/api/auth/login', data={
-            'auth':{"email_or_token":"u", "password":"f"}})
+        response = self.client.post('/api/auth/login', data=json.dumps({
+            'auth':{"email_or_token":"u", "password":"f"}}))
         self.assertEqual(response.status_code, 401)
 
         # Valid username/password combo, no family assigned
-        response = self.client.post('/api/auth/login', data={
-            'auth':{"email_or_token":"u", "password":"u"}})
+        response = self.client.post('/api/auth/login', data=json.dumps({
+            'auth':{"email_or_token":"u", "password":"u"}}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(json.loads(response)['family_name'],'')
         self.assertEqual(json.loads(response)['family_id'],'')
@@ -58,8 +58,8 @@ class APITestCase(unittest.TestCase):
         db.session.commit()
 
         # Valid username/password combo, no family assigned
-        response = self.client.post('/api/auth/login', data={
-            'auth':{"email_or_token":"u", "password":"u"}})
+        response = self.client.post('/api/auth/login', data=json.dumps({
+            'auth':{"email_or_token":"u", "password":"u"}}))
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(json.loads(response)['family_name'],'')
         self.assertNotEqual(json.loads(response)['family_id'],'')
