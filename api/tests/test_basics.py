@@ -20,7 +20,7 @@ class BasicTestCase(unittest.TestCase):
         self.assertFalse(current_app is None)
 
     def test_app_is_testing(self):
-        self.assertTrue(current_app.config['TESTING'],'Display this if wrong')
+        self.assertTrue(current_app.config['TESTING'],'App context is not TESTING')
 
     def test_errorShit(self):
         with self.assertRaises(TypeError):
