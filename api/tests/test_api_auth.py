@@ -1,4 +1,4 @@
-"""import unittest
+import unittest
 import re
 from base64 import b64encode
 import json
@@ -24,15 +24,48 @@ class APITestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    # Create the request url for the api call.
-    def get_api_headers(self,username,password):
-        return {
-            'Authorization':
-                'Basic ' + b64encode(
-                    (username + ":" + password).encode('utf-8')).decode('utf-8'),
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-            }
+    # Test verification of user credentials.
+    def test_login(self):
+        u = User(username="u", password="u", confirmed=True)
+        db.session.add(u)
+        db.session.commit()
+
+        # No username or password
+        response = self.client.post('/api/auth/login', data={
+            'auth':{"email_or_token":None, "password":None}})
+        self.assertEqual(response.status_code, 400)
+
+        # Invalid username/password combo
+        response = self.client.post('/api/auth/login', data={
+            'auth':{"email_or_token":"u", "password":"f"}})
+        self.assertEqual(response.status_code, 401)
+
+        # Valid username/password combo, no family assigned
+        response = self.client.post('/api/auth/login', data={
+            'auth':{"email_or_token":"u", "password":"u"}})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(json.loads(response)['family_name'],'')
+        self.assertEqual(json.loads(response)['family_id'],'')
+        self.assertEqual(json.loads(response)['members'],[])
+        self.assertEqual(json.loads(response)['leaders'],0)
+
+        # Assign user a family
+        f = Family(family_name='f')
+        db.session.add(f)
+        db.session.commit()
+        u.family = f
+        db.session.add(u)
+        db.session.commit()
+
+        # Valid username/password combo, no family assigned
+        response = self.client.post('/api/auth/login', data={
+            'auth':{"email_or_token":"u", "password":"u"}})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(json.loads(response)['family_name'],'')
+        self.assertNotEqual(json.loads(response)['family_id'],'')
+        self.assertNotEqual(json.loads(response)['members'],[])
+        self.assertNotEqual(json.loads(response)['leaders'],0)
+
 
     # General add user function to simplify code.
     def add_user(self):
