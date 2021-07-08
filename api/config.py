@@ -3,8 +3,7 @@ import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 with open('/etc/config.json') as config_file:
-	config = json.load(config_file)
-
+    config = json.load(config_file)
 
 # Creates the configuration class.
 class Config:
