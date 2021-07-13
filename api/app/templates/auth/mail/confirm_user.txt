@@ -1,3 +1,0 @@
-<a href=localhost:5000/auth/confirm/{{code}}>
-  Click here to confirm your email.
-</a>

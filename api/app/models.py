@@ -138,7 +138,7 @@ class User(UserMixin,db.Model):
         return s.dumps({'confirm':self.id}).decode('utf-8')
 
     # Provide a confirmation token to verify a user email change.
-    def generate_email_token(self, email,expires_in=600):
+    def generate_email_token(self, email, expires_in=600):
         s = Serializer(current_app.config['SECRET_KEY'],expires_in)
         return s.dumps({'email':email,'id':self.id}).decode('utf-8')
 

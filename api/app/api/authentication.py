@@ -143,9 +143,9 @@ def resend_confirmation_email():
         user=user,
         token=token
         )
-    response = jsonify({'message':f'Confirmation email sent.'})
+    response = jsonify({'message':'Confirmation email sent.'})
     response.status_code = 200
-    return 'None'
+    return response
 
 
 # Route for user confirmation.
@@ -170,10 +170,10 @@ def confirm_user(token):
         user.confirmed = True
         db.session.add(user)
         db.session.commit()
-        response = jsonify({'message':f'User ({user.username}) confirmed.'})
+        response = jsonify({'message':f'User {user.username} confirmed.'})
         response.status_code = 200
     else:
-        response = jsonify({'message':f'User ({user.username}) already confirmed.'})
+        response = jsonify({'message':f'User {user.username} already confirmed.'})
         response.status_code = 202
     return response
 
@@ -194,7 +194,7 @@ def send_family_invite():
         token=token
         )
     # Generate the response.
-    response = jsonify({'message':f'Join request email sent to {email}.'})
+    response = jsonify({'message':f'Join request email sent to {email} for family {g.current_user.family.family_name}.'})
     response.status_code = 200
     return response
 
@@ -228,10 +228,10 @@ def confirm_join_family(token):
         response.status_code = 200
         return response
     # Generate response for no user found.
-    else:
-        response = jsonify({'message':f'User not found with the target email.'})
-        response.status_code = 404
-        return response
+    # else:
+    #     response = jsonify({'message':f'User not found with the target email.'})
+    #     response.status_code = 404
+    #     return response
 
 
 # Route to send a password reset email.
@@ -251,7 +251,7 @@ def send_reset_request():
             token=token
             )
     # Generate the response.
-    response = jsonify({'message':f'Join request email sent to {email}.'})
+    response = jsonify({'message':f'Password reset email sent to {email}.'})
     response.status_code = 200
     return response
 
@@ -390,9 +390,8 @@ def send_change_email_request():
 # Route to update a user's email address.
 # Response code 207 sent if email is not available.
 # Response code 200 sent for successful update.
-@api.route('/auth/confirmChangeEmail', methods=['POST'])
-def confirm_change_email():
-    token = ast.literal_eval(request.json.get('body'))['token']
+@api.route('/auth/confirmChangeEmail/<token>', methods=['POST'])
+def confirm_change_email(token):
     s = Serializer(
         current_app._get_current_object().config['SECRET_KEY'],
         expires_in=600)
@@ -472,8 +471,6 @@ def change_password():
 # This will set g for the current request.
 @api.before_request
 def before_request():
-    print(request.json)
-    print(request.get_json())
     user = User.verify_auth_token(request.get_json()['auth']['email_or_token'])
     if user:
         g.current_user = user

@@ -21,9 +21,6 @@ def send_email(to, subject, template, **kwargs):
     """
 
     app = current_app._get_current_object()
-#################################### ACTION ####################################
-# Modify appearance of emails, if required.
-################################################################################
     msg = Message(app.config['MAIL_PREFIX'] + ' ' + subject,
                   sender=app.config['MAIL_SENDER'], recipients=[to])
     msg.body = render_template(template + '.txt', **kwargs)
