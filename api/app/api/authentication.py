@@ -390,9 +390,8 @@ def send_change_email_request():
 # Route to update a user's email address.
 # Response code 207 sent if email is not available.
 # Response code 200 sent for successful update.
-@api.route('/auth/confirmChangeEmail', methods=['POST'])
-def confirm_change_email():
-    token = ast.literal_eval(request.json.get('body'))['token']
+@api.route('/auth/confirmChangeEmail/<token>', methods=['POST'])
+def confirm_change_email(token):
     s = Serializer(
         current_app._get_current_object().config['SECRET_KEY'],
         expires_in=600)
