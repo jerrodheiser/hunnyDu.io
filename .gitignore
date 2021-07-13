@@ -16,7 +16,7 @@
 .flaskenv
 venv
 *data-dev.sqlite
-
+*tmp
 
 # misc
 .DS_Store
