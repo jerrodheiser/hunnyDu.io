@@ -1,6 +1,6 @@
 from . import db
 import hashlib
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, AnonymousUserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -283,23 +283,27 @@ class Task(db.Model):
     # It retains the current due date for instances of reopening.
     def update_next_due(self,
                         today=datetime.today().replace(hour=23,minute=59,second=59, microsecond=0)):
-        # today = datetime.today()
         if self.period == 'd':
             self.next_due = today + timedelta(days=1)
         elif self.period == 'w':
             while self.next_due < today \
                     or (self.next_due - today) < timedelta(days=7):
-                print (self.next_due,today)
                 self.next_due = self.next_due + timedelta(days=7)
         elif self.period == "m":
-            if today.month==11:
-                self.next_due = self.next_due.replace(month=1, year = today.year + 1)
-            elif today.month==12:
-                self.next_due = self.next_due.replace(month=2, year = today.year + 1)
-            else:
-                self.next_due = self.next_due.replace(month=today.month + 2)
+            while ((self.next_due.year * 12 + self.next_due.month) \
+                  -(today.year * 12 + today.month)) <= 1:
+                self.add_month_to_due_date()
         db.session.add(self)
         db.session.commit()
+
+    # Helper function to iterate a monthly task's due date.
+    def add_month_to_due_date(self):
+        if self.next_due.month == 2 and self.next_due.year % 4 == 0:
+            self.next_due += timedelta(days=29)
+            return
+        months_days = {1:31,2:28,3:31,4:30,5:31,6:30,7:31,8:31,9:30,10:31,11:30,12:31}
+        self.next_due += timedelta(months_days[self.next_due.month])
+
 
     # This function will determine if all subtasks under a task are complete.
     def determine_complete(self):
@@ -334,7 +338,7 @@ class Task(db.Model):
         if current_app.config['TESTING']:
             pass
         else:
-            flash(f'{self.taskname} is marked complete!')
+            # flash(f'{self.taskname} is marked complete!')
             for leader in User.query.filter_by(\
                     role = leader,family_id=st.assigned_user.family_id).all():
                 send_email(
@@ -369,6 +373,7 @@ class Task(db.Model):
                         assigned_user_id=assigned_user_id,
                         period=period)
 
+
 # This defines the subtask class, which holds subtasks identified under tasks.
 class Subtask(db.Model):
     __tablename__='subtasks'
@@ -382,8 +387,8 @@ class Subtask(db.Model):
     # It will also kick the parent task to determine if it is complete.
     def complete(self):
         if self.is_complete:
-            flash("Subtask is already complete")
-            flash(f'{self.subtask_name}; {self.is_complete}')
+            # flash("Subtask is already complete")
+            # flash(f'{self.subtask_name}; {self.is_complete}')
             return
         self.is_complete = True
         db.session.add(self)
@@ -392,7 +397,8 @@ class Subtask(db.Model):
 
     def uncomplete(self):
         if not self.is_complete:
-            flash('Subtask is not complete yet.')
+            # flash('Subtask is not complete yet.')
+            pass
         else:
             self.is_complete = False
             db.session.add(self)

@@ -4,6 +4,7 @@ from app import create_app, db
 from app.models import User, Role, Permission, Task, Subtask, Family
 from datetime import datetime, timedelta, date
 
+# Function for equating dates (excludes times)
 def is_date(date1, date2):
     if date1.day == date2.day and\
         date1.month == date2.month and\
@@ -11,6 +12,23 @@ def is_date(date1, date2):
         return True
     else:
         return False
+
+# Function for loading tasks.
+def load_tasks():
+    f = Family(family_name='f')
+    db.session.add(f)
+    db.session.commit()
+    u = User(username='u',family=f)
+    db.session.add(u)
+    db.session.commit()
+    td = Task(taskname='daily',period='d', assigned_user=u)
+    tw = Task(taskname='weekly',period='w', assigned_user=u)
+    tm = Task(taskname='monthly',period='m', assigned_user=u)
+    db.session.add(td)
+    db.session.add(tw)
+    db.session.add(tm)
+    db.session.commit()
+    return td,tw,tm
 
 # Test the user model.
 class TaskModelTestCase(unittest.TestCase):
@@ -36,16 +54,16 @@ class TaskModelTestCase(unittest.TestCase):
         db.drop_all()
         self.app_context.pop()
 
-    # tests is_date()
+    # Tests is_date()
     def test_is_date(self):
-        today = datetime.today()
-        tomorrow = today+timedelta(days=1)
-        next_month = today+timedelta(days=31)
-        next_year = today+timedelta(days=366)
-        self.assertTrue(is_date(today,today))
-        self.assertFalse(is_date(today,tomorrow))
-        self.assertFalse(is_date(today,next_month))
-        self.assertFalse(is_date(today,next_year))
+        self.assertTrue(is_date(datetime(month=1,day=1, year=2000),
+                                datetime(month=1,day=1, year=2000)))
+        self.assertFalse(is_date(datetime(month=1,day=1, year=2000),
+                                datetime(month=2,day=1, year=2000)))
+        self.assertFalse(is_date(datetime(month=1,day=1, year=2000),
+                                datetime(month=1,day=2, year=2000)))
+        self.assertFalse(is_date(datetime(month=1,day=1, year=2000),
+                                datetime(month=1,day=1, year=2001)))
 
     # Tests task generation for assigning due dates.
     def test_task_init(self):
@@ -73,62 +91,128 @@ class TaskModelTestCase(unittest.TestCase):
         t = Task(period='m',today = today)
         self.assertTrue(is_date(t.next_due,datetime(day=1,month=1,year=2001)))
 
-    # Tests updating due dates.
+    # Tests update_next_due.
     def test_update_next_due(self):
-        # Daily
-        t = Task(period='d')
-        t.update_next_due()
-        self.assertTrue(is_date(t.next_due,datetime.today() + timedelta(days=1)))
-        t.update_next_due()
-        self.assertTrue(is_date(t.next_due,datetime.today() + timedelta(days=1)))
+        td,tw,tm = load_tasks()
 
-        # Weekly
-        t = Task(period='w')
-        t.update_next_due()
-        delta = t.next_due - datetime.today()
-        self.assertTrue(t.next_due.weekday() == 5)
-        self.assertTrue(delta.days >= 7)
-        self.assertTrue(delta.days < 14)
-        t.update_next_due()
-        delta = t.next_due - datetime.today()
-        self.assertTrue(t.next_due.weekday() == 5)
-        self.assertTrue(delta.days >= 7)
-        self.assertTrue(delta.days < 14)
+        # Test daily task td
+        # Completed on day due
+        td.next_due = datetime(month=1, day=1, year=2021)
+        sim_day = datetime(month=1, day=1, year=2021)
+        td.update_next_due(today=sim_day)
+        self.assertTrue(is_date(td.next_due,datetime(month=1, day=2, year=2021)))
 
-        # Monthly
-        t = Task(period='m')
-        t.update_next_due()
-        if datetime.today().month == 12:
-            should_be = datetime.today().replace(day=1,month=2,year=datetime.today().year + 1)
-        elif datetime.today().month ==11:
-            should_be = datetime.today().replace(day=1,month=1,year=datetime.today().year + 1)
-        else:
-            should_be = datetime.today().replace(day=1,month=datetime.today().month + 1)
-        self.assertTrue(is_date(t.next_due,should_be),f'{t.next_due} &-& {should_be}')
-        t.update_next_due()
-        self.assertTrue(is_date(t.next_due,should_be))
+        # Completed a day early
+        td.next_due = datetime(month=1, day=2, year=2021)
+        sim_day = datetime(month=1, day=1, year=2021)
+        td.update_next_due(today=sim_day)
+        self.assertTrue(is_date(td.next_due,datetime(month=1, day=2, year=2021)))
 
-        # Edge monthly cases
-        today = datetime(month=11,day=10,year=2020)
-        t = Task(period='m',today=today)
-        db.session.add(t)
-        db.session.commit()
-        t.update_next_due(today=today)
-        should_be = datetime(day=1,month=1,year=2021)
-        self.assertTrue(is_date(t.next_due,should_be),t.next_due)
-        t.update_next_due(today=today)
-        self.assertTrue(is_date(t.next_due,should_be))
+        # Completed if overdue by one day
+        td.next_due = datetime(month=1, day=1, year=2021)
+        sim_day = datetime(month=1, day=2, year=2021)
+        td.update_next_due(today=sim_day)
+        self.assertTrue(is_date(td.next_due,datetime(month=1, day=3, year=2021)))
 
-        today = datetime(month=12,day=10,year=2020)
-        t = Task(period='m',today=today)
-        db.session.add(t)
-        db.session.commit()
-        t.update_next_due(today=today)
-        should_be = datetime(day=1,month=2,year=2021)
-        self.assertTrue(is_date(t.next_due,should_be),t.next_due)
-        t.update_next_due(today=today)
-        self.assertTrue(is_date(t.next_due,should_be),f'{t.next_due} *** {should_be}')
+        # Completed if overdue by 3 days
+        td.next_due = datetime(month=1, day=1, year=2021)
+        sim_day = datetime(month=1, day=4, year=2021)
+        td.update_next_due(today=sim_day)
+        self.assertTrue(is_date(td.next_due,datetime(month=1, day=5, year=2021)))
 
+
+        # Test weekly task tw
+        # Completed during week due
+        tw.next_due = datetime(month=1, day=8, year=2021)
+        sim_day = datetime(month=1, day=4, year=2021)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=1, day=15, year=2021)))
+
+        # Completed on saturday before due
+        tw.next_due = datetime(month=1, day=8, year=2021)
+        sim_day = datetime(month=1, day=2, year=2021)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=1, day=15, year=2021)))
+
+        # Completed a week early
+        tw.next_due = datetime(month=1, day=8, year=2021)
+        sim_day = datetime(month=1, day=1, year=2021)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=1, day=8, year=2021)))
+
+        # Completed at the end of a month
+        tw.next_due = datetime(month=1, day=29, year=2021)
+        sim_day = datetime(month=1, day=26, year=2021)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=2, day=5, year=2021)))
+
+        # Completion results in shifting the year by one
+        tw.next_due = datetime(month=12, day=25, year=2020)
+        sim_day = datetime(month=12, day=23, year=2020)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=1, day=1, year=2021)))
+
+        # Due date is in next year, completion date is a year behind
+        tw.next_due = datetime(month=1, day=1, year=2021)
+        sim_day = datetime(month=12, day=31, year=2020)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=1, day=8, year=2021)))
+
+        # Completed if overdue by less than a week
+        tw.next_due = datetime(month=1, day=8, year=2021)
+        sim_day = datetime(month=1, day=9, year=2021)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=1, day=22, year=2021)))
+
+        # Completed if overdue for 3 weeks
+        tw.next_due = datetime(month=1, day=8, year=2021)
+        sim_day = datetime(month=1, day=31, year=2021)
+        tw.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tw.next_due,datetime(month=2, day=12, year=2021)))
+
+
+        # Test monthly task tm
+        # Completed earlier in the month
+        tm.next_due = datetime(month=2, day=1, year=2021)
+        sim_day = datetime(month=1, day=1, year=2021)
+        tm.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tm.next_due,datetime(month=3, day=1, year=2021)))
+
+        # Completed a month early
+        tm.next_due = datetime(month=3, day=1, year=2021)
+        sim_day = datetime(month=1, day=31, year=2021)
+        tm.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tm.next_due,datetime(month=3, day=1, year=2021)))
+
+        # Completed if overdue by less than a month
+        tm.next_due = datetime(month=1, day=1, year=2021)
+        sim_day = datetime(month=1, day=31, year=2021)
+        tm.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tm.next_due,datetime(month=3, day=1, year=2021)))
+
+        # Completed if overdue for 3 months
+        tm.next_due = datetime(month=1, day=1, year=2021)
+        sim_day = datetime(month=4, day=12, year=2021)
+        tm.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tm.next_due,datetime(month=6, day=1, year=2021)))
+
+        # Completed at the end of a year
+        tm.next_due = datetime(month=12, day=1, year=2020)
+        sim_day = datetime(month=11, day=25, year=2020)
+        tm.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tm.next_due,datetime(month=1, day=1, year=2021)))
+
+        # Completed late at the end of a year
+        tm.next_due = datetime(month=11, day=1, year=2020)
+        sim_day = datetime(month=11, day=24, year=2020)
+        tm.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tm.next_due,datetime(month=1, day=1, year=2021)))
+
+        # Completed over a year late
+        tm.next_due = datetime(month=11, day=1, year=2020)
+        sim_day = datetime(month=12, day=24, year=2021)
+        tm.update_next_due(today=sim_day)
+        self.assertTrue(is_date(tm.next_due,datetime(month=2, day=1, year=2022)))
 
 
     # Test Task and Subtask completion methods.
