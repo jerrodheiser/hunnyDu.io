@@ -29,6 +29,8 @@ export default class Data {
     // Populate the body of the request if data is provided.
     if (body !== null) {
       data.body = JSON.stringify(body);
+      let d = new Date();
+      data.tzOffset = d.getTimezoneOffset()/60;
     }
 
     // Since GET requests cannot send data, this logic is performed to

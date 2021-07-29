@@ -350,28 +350,30 @@ class Task(db.Model):
                     )
 
     # This will return json data for the subject post.
-    def to_json(self):
+    def to_json(self, tz_offset = 0):
         json_task = {
             'id':self.id,
             'taskname':self.taskname,
             'next_due':self.next_due.strftime('%x'),
             'subtasks':[subtask.to_json() for subtask in self.subtasks],
             'assignee':self.assigned_user.username,
-            'overdue':self.next_due < datetime.today()
+            'overdue':self.next_due < (datetime.today() + timedelta(hours=(-1*tz_offset))
         }
         return json_task
 
     # This will create a task and commit it to the db.
-    def from_json(json_task):
+    def from_json(json_task, tz_offset = 0):
         taskname = json_task.get('taskname')
         period = json_task.get('period')
         assigned_user_id = json_task.get('assignee')
         if taskname is None or assigned_user_id is None or period is None:
             return None
         else:
+            today = datetime.today() + timedelta(hours=(-1*tz_offset))
             return Task(taskname=taskname,
                         assigned_user_id=assigned_user_id,
-                        period=period)
+                        period=period,
+                        today=today.replace(hour=23,minute=59,second=59))
 
 
 # This defines the subtask class, which holds subtasks identified under tasks.
