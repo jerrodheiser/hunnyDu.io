@@ -13,7 +13,7 @@ from .decorators import permission_required, leader_required, \
 @login_required
 def get_tasks():
     tasks = g.current_user.tasks.order_by(Task.next_due.asc()).all()
-    tz_offset = request.get_json()['tzOffset']
+    tz_offset = request.get_json()['auth']['tzOffset']
     if g.current_user.family:
         family_tasks = [task.to_json(tz_offset) for task in g.current_user.family.get_family_tasks()]
     else:
@@ -32,7 +32,7 @@ def get_tasks():
 @leader_required
 def new_task():
     t_json = ast.literal_eval(request.json.get('body'))
-    tz_offset = request.get_json()['tzOffset']
+    tz_offset = request.get_json()['auth']['tzOffset']
     task = Task.from_json(t_json. tz_offset)
     if task:
         db.session.add(task)

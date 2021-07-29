@@ -20,9 +20,11 @@ export default class Data {
     // This will encode the credentials provided to the Authorization header.
     // BUGZ: Currently encodes credentials in the body.
     if ( requiresAuth ) {
+      let d = new Date();
       data.auth = {
         email_or_token: credentials.email_or_token || Cookies.getJSON('apiToken') || '',
         password: credentials.password,
+        tzOffset: d.getTimezoneOffset()/60
       }
     }
 
@@ -31,8 +33,6 @@ export default class Data {
       data.body = JSON.stringify(body);
     }
 
-    let d = new Date();
-    data.tzOffset = d.getTimezoneOffset()/60;
 
     // Since GET requests cannot send data, this logic is performed to
     //    prevent a 400 error code (bad request) from occurring.

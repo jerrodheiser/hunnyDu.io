@@ -472,6 +472,7 @@ def change_password():
 @api.before_request
 def before_request():
     user = User.verify_auth_token(request.get_json()['auth']['email_or_token'])
+    print(request.get_json())
     if user:
         g.current_user = user
     else:
