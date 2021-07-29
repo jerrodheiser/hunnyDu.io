@@ -357,7 +357,7 @@ class Task(db.Model):
             'next_due':self.next_due.strftime('%x'),
             'subtasks':[subtask.to_json() for subtask in self.subtasks],
             'assignee':self.assigned_user.username,
-            'overdue':self.next_due < (datetime.today() + timedelta(hours=(-1*tz_offset))
+            'overdue':self.next_due < (datetime.today() + timedelta(hours=(-1*tz_offset)))
         }
         return json_task
 
